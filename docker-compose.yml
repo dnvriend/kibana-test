@@ -1,0 +1,13 @@
+# search and analytics engine
+elasticsearch:
+  image: elasticsearch
+  ports:
+    - 9200:9200
+
+# visualize and explore the logs
+kibana:
+  image: kibana
+  environment:
+    - ELASTICSEARCH_URL=http://kibanatest_elasticsearch_1:9200
+  ports:
+    - 5601:5601
