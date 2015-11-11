@@ -18,6 +18,26 @@ curl -XPUT http://$IP:9200/shakespeare -d '
 '
 }
 
+function MappingLogs() {
+curl -XPUT http://$IP:9200/logstash-2015.05.18 -d '
+{
+ "mappings" : {
+  "log" : {
+   "properties" : {
+    "geo" : {
+     "properties" : {
+      "coordinates" : {
+        "type" : "geo_point"
+      }
+     }
+    }
+   }
+  }
+ }
+}
+'
+}
+
 function LoadAccounts() {
 curl -XPOST $IP':9200/bank/accounts/_bulk?pretty' --data-binary @data/accounts.json
 }
@@ -48,9 +68,10 @@ done;
 docker rm -f $(docker ps -aq)
 docker-compose --x-networking up -d
 waitForService $IP 9200
-MappingShakespeare
 LoadAccounts
+MappingShakespeare
 LoadShakeSpeare
+MappingLogs
 LoadLogs
 echo "kibana is available at $IP:5601"
 curl $IP':9200/_cat/indices?v'
